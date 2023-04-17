@@ -1,0 +1,72 @@
+! Example input file
+
+result_folder ./TEST_RESULT !specify the folder in which the results should be saved.
+!vtkPeriod 100 !specify the step increment for outputting vtk files.
+statPeriod 10 !specify the step increment for outputting model statistics.
+
+num_threads 8 !specify the number of OpenMP threads to be used
+
+!read_densities density_file.vtk !use this line to read model information from a vtk 
+                                 !file. Useful for resuming a previous simulation.
+
+!read_sample Sand_002_00.txt !use this line if you want to read solid node data from file.
+                        !The first three lines of this file should be the number of 
+                        !points in the x, y and z directions. Following that there 
+                        !should be x*y*z lines which each line contatining 0 or 1,
+                        !0 for fluid node and 1 for solid node. 
+
+!if you are using a sample file (previous line in uncommented), comment out the next 
+!three lines.
+lxSample 200 !specify the grid size in the x direction. 
+lySample 200 !specify the grid size in the y direction.
+lzSample 200 !specify the grid size in the z direction.
+
+
+rho0  0.2        !specify the density used for initializing the fluid domain.
+                 !Not needed if densities are read from file.
+IniPerturbRate 1 !specify the perturbation rate used for initializing the density
+                 !of the fluid domain. Not needed if densities are read from file.  
+rhos  0.35       !specify the density of solids (controls the contact angle).
+
+!G -6.12 !specify G if the Shan-Chen EOS is used, else, comment out this line.
+tau 1.   !specify the relaxaton time.
+
+carn_star !specify if the Carnahan-Starling EOS should be used. 
+          !The default EOS is Shan-Chen.
+T_Tc .7   !if CS EOS is being used, specify the T/Tc.
+rhol_spinodal 0.2725 !specify the density to be used for identifying liquid nodes.
+rhog_spinodal 0.0484 !specify the density to be used for identifying vapor nodes.
+
+resize !preparing the domain, if sample file is provided, comment out this line.
+
+!place_sphere 35 35 35 30 !use this line to place a single sphere in the domain
+			                    !specify x, y, z and r
+!generate_solids 30 10 20 0 100 0 100 0 100 !use this line to generate solids in
+                                            !the domain. specify number of solids,
+                                            !rmin, rmax, xmin, xmax, ymin, ymax,
+                                            !zmin, zmax.
+read_positions ../example_positions_file !use this line to read grain info from
+                                         !file. The file should contain x, y, z,
+                                         !and r for each grain, line-separated.
+
+rho_inject_period 100 !specify the density injection/drainage period.
+rho_increment 0.005    !specify the density injection/drainage increment.
+inject_type 0		       !specify the injection/drainage type.
+                       !Options: apply density change:
+                       !0 everywhere in the fluid domain,
+                       !1 at none-liquid nodes,
+                       !2 at liquid nodes.
+inject_position 1      !specify the injection/drainage position.
+                       !Options: apply density change:
+                       !1 everywhere.
+                       !0.1 z<0.1*lz.
+                       !0.5 at half bottom.          
+                
+!max_saturation 0.9   !specify the maximum saturation the first imbibition path can reach
+!min_saturation 0.1   !specify the minimum saturation the first drainage path can reach
+!bound_difference 0.05  !specify the interval between maximum/minimum saturation 
+		       !of two consectutive hyteresis loops
+target_density 0.49   !specify the target packing density after erosion	
+
+step_max 60000000 !specify the maximum number of iterations.   
+
